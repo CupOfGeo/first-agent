@@ -1,0 +1,38 @@
+[project]
+name = "first-agent"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "python-dotenv>=1.1.1",
+]
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.3.0",
+    "ruff>=0.12.9",
+]
+
+[tool.ruff]
+line-length = 119
+target-version = "py312"
+
+[tool.ruff.lint]
+# Enable: Error, pyFlakes, Import sorting, pyUpgrade, Complexity
+select = ["E", "F", "I", "UP", "C90"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 12
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
+
+[tool.pylint]
+disable = ["too-few-public-methods"]
+max-line-length = 119
+
+[tool.mypy]
+ignore_missing_imports = true
+follow_imports = "skip"
+strict_optional = true

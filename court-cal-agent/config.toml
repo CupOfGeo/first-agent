@@ -1,0 +1,4 @@
+# Used for gcalcli
+[calendars]
+default-calendars = ["Travis County Court Sync for Jaime <3"]
+ignore-calendars = ["Family", "mazzeogeorge@gmail.com"]
