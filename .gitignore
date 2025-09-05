@@ -1,7 +1,6 @@
 # Per-project
 fastagent.secrets.yaml
 credentials.json
-.claude/
 
 # Python-generated files
 
