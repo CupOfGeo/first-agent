@@ -46,6 +46,7 @@ fast = FastAgent(
     name="parallel",
 )
 async def main() -> None:
+    """Main function to run the parallel workflow."""
     async with fast.run() as agent:
         await agent.parallel.send(Prompt.user("Student short story submission", Path("short_story.txt")))
 

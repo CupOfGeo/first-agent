@@ -1,3 +1,5 @@
+"""Agent chaining workflow using FastAgent framework."""
+
 import asyncio
 
 from mcp_agent.core.fastagent import FastAgent
@@ -23,6 +25,7 @@ fast = FastAgent("Agent Chaining")
     sequence=["url_fetcher", "social_media"],
 )
 async def main() -> None:
+    """Main function to run the agent chaining workflow."""
     async with fast.run() as agent:
         # using chain workflow
         await agent.post_writer.send("https://llmindset.co.uk")

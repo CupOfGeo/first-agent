@@ -52,6 +52,7 @@ fast = FastAgent("Orchestrator-Workers")
     plan_iterations=3,
 )
 async def main() -> None:
+    """Main function to run the orchestrator workflow."""
     async with fast.run() as agent:
         # await agent.author(
         #     "write a 250 word short story about kittens discovering a castle, and save it to short_story.md"

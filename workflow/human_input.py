@@ -16,6 +16,7 @@ fast = FastAgent("Human Input")
     human_input=True,
 )
 async def main() -> None:
+    """Main function to run the human input workflow."""
     async with fast.run() as agent:
         # this usually causes the LLM to request the Human Input Tool
         await agent("print the next number in the sequence")

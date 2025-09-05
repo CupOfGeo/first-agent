@@ -17,7 +17,8 @@ fast = FastAgent(
 
 # Sample requests demonstrating direct tool use vs agent delegation
 SAMPLE_REQUESTS = [
-    "Download and summarize https://llmindset.co.uk/posts/2024/12/mcp-build-notes/",  # Router handles directly with fetch
+    # Router handles directly with fetch
+    "Download and summarize https://llmindset.co.uk/posts/2024/12/mcp-build-notes/",
     "Analyze the quality of the Python codebase in the current working directory",  # Delegated to code expert
     "What are the key principles of effective beekeeping?",  # Delegated to general assistant
 ]
@@ -52,7 +53,8 @@ async def main() -> None:
     console = Console()
     console.print(
         "\n[bright_red]Router Workflow Demo[/bright_red]\n\n"
-        "Enter a request to route it to the appropriate agent.\nEnter [bright_red]STOP[/bright_red] to run the demo, [bright_red]EXIT[/bright_red] to leave"
+        "Enter a request to route it to the appropriate agent.\nEnter [bright_red]STOP[/bright_red] to run the demo, "
+        "[bright_red]EXIT[/bright_red] to leave"
     )
 
     async with fast.run() as agent:

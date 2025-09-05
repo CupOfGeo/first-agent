@@ -53,6 +53,7 @@ fast = FastAgent("Evaluator-Optimizer")
     max_refinements=3,  # Maximum iterations
 )
 async def main() -> None:
+    """Main function to run the evaluator workflow."""
     async with fast.run() as agent:
         job_posting = (
             "Software Engineer at LastMile AI. Responsibilities include developing AI systems, "
@@ -61,7 +62,8 @@ async def main() -> None:
         )
         candidate_details = (
             "Alex Johnson, 3 years in machine learning, contributor to open-source AI projects, "
-            "proficient in Python and TensorFlow. Motivated by building scalable AI systems to solve real-world problems."
+            "proficient in Python and TensorFlow. Motivated by building scalable AI systems to solve "
+            "real-world problems."
         )
         company_information = "Look up from the LastMile AI About page: https://lastmileai.dev/about"
 

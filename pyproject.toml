@@ -5,13 +5,19 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "dotenv>=0.9.9",
+    "promptlayer>=1.0.66",
     "python-dotenv>=1.1.1",
+    "requests>=2.32.5",
+    "structlog>=25.4.0",
+    "types-requests>=2.32.4.20250809",
 ]
 
 [dependency-groups]
 dev = [
     "pre-commit>=4.3.0",
     "ruff>=0.12.9",
+    "types-requests>=2.32.4.20250809",
 ]
 
 [tool.ruff]
@@ -29,7 +35,7 @@ max-complexity = 12
 known-first-party = ["app"]
 
 [tool.pylint]
-disable = ["too-few-public-methods"]
+disable = ["too-few-public-methods", "import-error"]
 max-line-length = 119
 
 [tool.mypy]
