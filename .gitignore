@@ -1,6 +1,7 @@
 # Per-project
 fastagent.secrets.yaml
 credentials.json
+court-cal-agent/context/
 
 # Python-generated files
 
