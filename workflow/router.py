@@ -28,6 +28,7 @@ SAMPLE_REQUESTS = [
     name="fetcher",
     instruction="""You are an agent, with a tool enabling you to fetch URLs.""",
     servers=["fetch"],
+    model="sonnet",
 )
 @fast.agent(
     name="code_expert",
@@ -35,15 +36,17 @@ SAMPLE_REQUESTS = [
     When asked about code, architecture, or development practices,
     you provide thorough and practical insights.""",
     servers=["filesystem"],
+    model="sonnet",
 )
 @fast.agent(
     name="general_assistant",
     instruction="""You are a knowledgeable assistant that provides clear,
     well-reasoned responses about general topics, concepts, and principles.""",
+    model="sonnet",
 )
 @fast.router(
     name="route",
-    model="gpt-4.1",
+    model="sonnet",
     agents=["code_expert", "general_assistant", "fetcher"],
 )
 async def main() -> None:

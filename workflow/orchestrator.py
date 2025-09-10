@@ -64,7 +64,7 @@ async def main() -> None:
         factuality/logical consistency and style adherence. Use the style rules from
         https://apastyle.apa.org/learn/quick-guide-on-formatting and
         https://apastyle.apa.org/learn/quick-guide-on-references.
-        Write the graded report to graded_report.md in the same directory as short_story.md"""
+        Write the graded report to graded_report.md in the same directory as short_story.txt"""
 
         await agent.orchestrate(task)
 

@@ -12,6 +12,15 @@
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "name": "Workflow Evaluator",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/workflow/evaluator.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }

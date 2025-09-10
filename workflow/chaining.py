@@ -12,6 +12,7 @@ fast = FastAgent("Agent Chaining")
     "url_fetcher",
     instruction="Given a URL, provide a complete and comprehensive summary",
     servers=["fetch"],
+    model="sonnet",
 )
 @fast.agent(
     "social_media",
@@ -19,6 +20,7 @@ fast = FastAgent("Agent Chaining")
     Write a 280 character social media post for any given text.
     Respond only with the post, never use hashtags.
     """,
+    model="sonnet",
 )
 @fast.chain(
     name="post_writer",

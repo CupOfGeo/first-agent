@@ -2,6 +2,7 @@
 fastagent.secrets.yaml
 credentials.json
 court-cal-agent/context/
+context/
 
 # Python-generated files
 

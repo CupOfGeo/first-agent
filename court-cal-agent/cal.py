@@ -7,11 +7,11 @@ It fetches court data, compares it with calendar events, and updates the calenda
 import asyncio
 import json
 import os
-import subprocess
 import sys
-from pathlib import Path
+from datetime import datetime
 
 from dotenv import load_dotenv
+from fetch_court_data import fetch_court_data, get_calendar_state
 from mcp_agent.core.fastagent import FastAgent
 
 load_dotenv()
@@ -28,77 +28,45 @@ def fetch_court_data_and_calendar():
     print("Fetching court data and current calendar state...")
 
     try:
-        # Run fetch_court_data.py script
-        subprocess.run(
-            [sys.executable, "scripts/fetch_court_data.py", last_name or "Pesantes"],
-            cwd="/workspaces/first-agent/court-cal-agent",
-            capture_output=True,
-            text=True,
-            check=True,
+        # Call the fetch_court_data function directly
+        court_data, calendar_before, timestamp = fetch_court_data(
+            attorney_last_name=last_name or "Pesantes", save_files=True
         )
-        print("✓ Court data fetched successfully")
 
-        # Find the most recent context files
-        context_dir = Path("/workspaces/first-agent/court-cal-agent/context")
+        if court_data is None:
+            raise RuntimeError("Failed to fetch court data")
 
-        # Get most recent files
-        court_data_files = list(context_dir.glob("court_data_*.json"))
-        before_files = list(context_dir.glob("before_*.csv"))
+        print("Court data fetched successfully")
 
-        if not court_data_files or not before_files:
-            raise FileNotFoundError("Could not find recent context files")
+        # Find the saved files to get their names for display
+        court_data_file = f"court_data_{timestamp}.json"
+        before_file = f"before_{timestamp}.csv"
 
-        # Get the most recent files
-        latest_court_data = max(court_data_files, key=lambda f: f.stat().st_mtime)
-        latest_before = max(before_files, key=lambda f: f.stat().st_mtime)
+        return court_data, calendar_before, court_data_file, before_file
 
-        # Load court data
-        with open(latest_court_data, encoding="utf-8") as f:
-            court_data = json.load(f)
-
-        # Load calendar before state
-        with open(latest_before, encoding="utf-8") as f:
-            calendar_before = f.read()
-
-        return court_data, calendar_before, latest_court_data.name, latest_before.name
-
-    except subprocess.CalledProcessError as e:
-        print(f"✗ Error fetching court data: {e}")
-        print(f"Stdout: {e.stdout}")
-        print(f"Stderr: {e.stderr}")
-        sys.exit(1)
-    except (FileNotFoundError, OSError, json.JSONDecodeError) as e:
-        print(f"✗ Error: {e}")
+    except (FileNotFoundError, OSError, json.JSONDecodeError, RuntimeError) as e:
+        print(f"Error: {e}")
         sys.exit(1)
 
 
 def save_calendar_after_state():
     """Save the calendar state after agent completes its work."""
-    print("\nSaving calendar after state...")
+    print("Saving calendar after state...")
 
     try:
-        subprocess.run(
-            [sys.executable, "scripts/save_calendar_state.py"],
-            cwd="/workspaces/first-agent/court-cal-agent",
-            capture_output=True,
-            text=True,
-            check=True,
-        )
-        print("✓ Calendar after state saved successfully")
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
-        # Find the most recent after file and show summary
-        context_dir = Path("/workspaces/first-agent/court-cal-agent/context")
-        after_files = list(context_dir.glob("after_*.csv"))
-        if after_files:
-            latest_after = max(after_files, key=lambda f: f.stat().st_mtime)
-            print(f"✓ After state saved to: {latest_after.name}")
+        # Use the get_calendar_state function directly
+        calendar_data = get_calendar_state(timestamp, save_files=True)
 
-    except subprocess.CalledProcessError as e:
-        print(f"✗ Error saving calendar after state: {e}")
-        print(f"Stdout: {e.stdout}")
-        print(f"Stderr: {e.stderr}")
+        if calendar_data is None:
+            print("Error saving calendar after state")
+        else:
+            print("Calendar after state saved successfully")
+            print(f"After state saved to: after_{timestamp}.csv")
+
     except (FileNotFoundError, OSError) as e:
-        print(f"✗ Error: {e}")
+        print(f"Error: {e}")
 
 
 def build_instruction_with_context(court_data, calendar_before, court_file, before_file):
@@ -136,18 +104,18 @@ Current Calendar State (from {before_file}):
 TASKS TO COMPLETE:
 ==================
 
-1. Use the audited gcalcli wrapper to check the {calendar_name} calendar for the same time period
-   Use: python3 /workspaces/first-agent/court-cal-agent/gcalcli_wrapper.py [gcalcli_args]
+1. Use gcalcli directly to check the {calendar_name} calendar for the same time period
    Available gcalcli commands:
-   - list                list available calendars
-   - agenda              get an agenda for a time period
-   - calm                get a month agenda in calendar format
-   - quick               quick-add an event to a calendar
-   - add                 add a detailed event to the calendar
-   - edit                edit calendar events
-   - delete              delete calendar events
+   - gcalcli list                         list available calendars
+   - gcalcli agenda [start_date] [end_date]  get an agenda for a time period
+   - gcalcli calm [month] [year]          get a month agenda in calendar format
+   - gcalcli quick "event description"    quick-add an event to a calendar
+   - gcalcli add                          add a detailed event to the calendar
+   - gcalcli edit [event_id]              edit calendar events
+   - gcalcli delete [event_id]            delete calendar events
 
-   All calendar operations are automatically logged to SQLite audit database.
+   Use --calendar="calendar_name" to specify which calendar to work with.
+   Use --tsv for tab-separated output that's easier to parse.
 
 2. Compare the court appearances (shown above) with current calendar events:
    - Identify any missing events that need to be added
@@ -158,11 +126,6 @@ TASKS TO COMPLETE:
    - Add any missing court appearances to the calendar
    - Update any changed events
    - Each calendar entry should include: case number, defendant name, court room, charge, and appearance requirement
-
-4. Save the updated calendar state:
-   - After making all changes, run: python3 /workspaces/first-agent/court-cal-agent/scripts/save_calendar_state.py
-   - This will save the current calendar state with a timestamp for audit purposes
-   - IMPORTANT: You MUST run this script at the end to capture the final state
 
 The calendar should exactly reflect all {len(court_data)} court appointments shown in the context data above.
 
@@ -184,7 +147,7 @@ async def main() -> None:
     @fast.agent(
         "cal_manager",
         instruction=instruction,
-        servers=["fetch", "cli"],
+        servers=["cli"],
         model="sonnet",
     )
     async def cal_manager_agent():

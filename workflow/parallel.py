@@ -19,12 +19,14 @@ fast = FastAgent(
     instruction=""""Review the short story for grammar, spelling, and punctuation errors.
     Identify any awkward phrasing or structural issues that could improve clarity.
     Provide detailed feedback on corrections.""",
+    model="sonnet",
 )
 @fast.agent(
     name="fact_checker",
     instruction="""Verify the factual consistency within the story. Identify any contradictions,
     logical inconsistencies, or inaccuracies in the plot, character actions, or setting.
     Highlight potential issues with reasoning or coherence.""",
+    model="sonnet",
 )
 @fast.agent(
     name="style_enforcer",
@@ -39,6 +41,7 @@ fast = FastAgent(
     into a structured report. Summarize key issues and categorize them by type.
     Provide actionable recommendations for improving the story,
     and give an overall grade based on the feedback.""",
+    model="sonnet",
 )
 @fast.parallel(
     fan_out=["proofreader", "fact_checker", "style_enforcer"],

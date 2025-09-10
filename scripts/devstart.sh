@@ -2,8 +2,9 @@
 set -e
 REPO_NAME="first-agent"
 
-# dotfile
+# dotfile stuff
 echo 'alias gs="git status"' >> ~/.zshrc
+
 
 # Install GitHub CLI
 curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
@@ -11,19 +12,30 @@ chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null
 apt update
 apt install gh -y
+
+# SQLite3
 sudo apt install sqlite3
 
-# Install SELinux development tools
-sudo apt-get install -y \
-    selinux-utils \
-    selinux-policy-dev \
-    policycoreutils \
-    checkpolicy \
-    semodule-utils
+# # Install SELinux development tools
+# sudo apt-get install -y \
+#     selinux-utils \
+#     selinux-policy-dev \
+#     policycoreutils \
+#     checkpolicy \
+#     semodule-utils
 
 # Install uv
 curl -LsSf https://astral.sh/uv/install.sh | sh
 export PATH="$HOME/.cargo/bin:$PATH"
+
+# Check if project has been initialized with uv
+if [ ! -f "pyproject.toml" ]; then
+    echo "Initializing new uv project..."
+    uv init
+    uv add --group dev pre-commit
+else
+    echo "Project already initialized, skipping uv init"
+fi
 
 # Setup Python environment
 uv sync --group dev

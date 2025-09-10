@@ -5,8 +5,12 @@
 
 logger:
   type: file
-  level: error
-  # truncate_tools: true
+  level: debug  # Changed from error to info to capture more logs
+  path: "court-cal-agent/context/fastagent.jsonl"  # Explicitly set the log file path
+  progress_display: true  # Enable progress display
+  show_chat: true  # Show chat messages
+  show_tools: true  # Show tool calls
+  truncate_tools: true  # Truncate long tool outputs
 default_model: generic.gemini-2.0-flash
 mcp:
   servers:
