@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM python:3.14-slim
 
 # Build arguments for customization
 ARG AGENT_NAME=court-cal-agent
